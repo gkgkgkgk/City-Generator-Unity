@@ -24,6 +24,7 @@ public class FieldGen : MonoBehaviour
     {
         generateRandomFields(numberOfFields);
         sampleDisplayTensors();
+        GetComponent<StreamLineGen>().generateStreamLines();
     }
 
     // Update is called once per frame
@@ -67,7 +68,7 @@ public class FieldGen : MonoBehaviour
         }
     }
 
-    Tensor sampleTensor(Vector3 position)
+    public Tensor sampleTensor(Vector3 position)
     {
         float theta = 0f;
         float weight = 0f;

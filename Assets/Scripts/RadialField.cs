@@ -18,7 +18,6 @@ public class RadialField : Field
         if (dist < size)
         {
             float weight = Mathf.Pow(((size - (dist > size / 2 ? dist : 0)) / size), decay);
-            Debug.Log(dist + " " + size + " " + weight);
             return new Tensor(position, 90f + (Mathf.Rad2Deg * Mathf.Atan2(p.x - position.x, p.z - position.z)), 1.0f);
         }
 
