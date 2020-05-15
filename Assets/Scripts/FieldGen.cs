@@ -102,14 +102,4 @@ public class FieldGen : MonoBehaviour
             line.SetActive(false);
         }
     }
-
-    public void drawFields()
-    {
-
-    }
-
-    public void hideFields()
-    {
-
-    }
 }
