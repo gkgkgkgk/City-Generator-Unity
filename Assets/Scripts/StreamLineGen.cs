@@ -14,6 +14,9 @@ public class StreamLineGen : MonoBehaviour
     public float dStep = 0.5f;
 
     public List<Road> roads = new List<Road>();
+    public List<Vector3> majorSeeds = new List<Vector3>();
+    public List<Vector3> minorSeeds = new List<Vector3>();
+
 
     FieldGen field;
 
@@ -30,157 +33,196 @@ public class StreamLineGen : MonoBehaviour
     public void generateStreamLines()
     {
         bool major = true;
-        Road r = generateRoad(Vector3.zero, major);
+        generateRoad(Vector3.zero, major);
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10f; i++)
         {
             major = !major;
-            Vector3 seed = selectSeed(r);
-
-            r = generateRoad(seed, major);
+            Vector3 seed = selectSeed(major);
+            if (seed != Vector3.zero)
+            {
+                generateRoad(seed, major);
+            }
+            else
+            {
+                break;
+            }
         }
     }
 
     Road generateRoad(Vector3 seed, bool major)
     {
-        /* notes:
-            - all streamlines must be dSep away from each other.
-            - sample points in streamlines must be equal distance from each other and smaller than dsep
-            - if a streamline gets close to another streamline, it is discontinued in the current direction
-            - streamlines start a central point and move in opposite directions
-            - new seed points must be at least dSep away from any other streamline on the same axis
-        */
         Road r = new Road();
-        r.major = major;
         roads.Add(r);
-
         bool buildPos = true;
         bool buildNeg = true;
+        int j = 0;
 
-        Vector3 positionPos = seed;
-        Vector3 positionNeg = seed;
-        r.addPoint(positionPos);
-        r.addPoint(positionNeg);
+        Vector3 positionPos = Vector3.zero;
+        Vector3 positionNeg = Vector3.zero;
 
-        int panic = 0;
-
-        while (buildPos || buildNeg)
+        while (j < 10000 && (buildNeg || buildPos))
         {
-            panic++;
-            float directionPos = integrate(positionPos);
-            if (major)
+            j++;
+
+
+            if (buildPos)
             {
-                positionPos += new Vector3(Mathf.Sin(directionPos * Mathf.Deg2Rad) * dStep, 0f, Mathf.Cos(directionPos * Mathf.Deg2Rad) * dStep);
-            }
-            else
-            {
-                positionPos += new Vector3(Mathf.Cos(directionPos * Mathf.Deg2Rad) * dStep, 0f, -Mathf.Sin(directionPos * Mathf.Deg2Rad) * dStep);
+                positionPos += integrateStep(positionPos, true, major);
+                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                sphere.transform.position = positionPos;
+
+                if (validPoint(positionPos))
+                {
+                    r.addPoint(positionPos);
+                    if (major)
+                    {
+                        majorSeeds.Add(positionPos);
+
+                    }
+                    else
+                    {
+                        minorSeeds.Add(positionPos);
+
+                    }
+                }
+                else
+                {
+                    buildPos = false;
+                }
             }
 
-            float directionNeg = integrate(positionNeg);
+            if (buildNeg)
+            {
+                positionNeg += integrateStep(positionNeg, false, major);
+                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                sphere.transform.position = positionNeg;
 
-            if (major)
-            {
-                positionNeg -= new Vector3(Mathf.Sin(directionNeg * Mathf.Deg2Rad) * dStep, 0f, Mathf.Cos(directionNeg * Mathf.Deg2Rad) * dStep);
-            }
-            else
-            {
-                positionNeg -= new Vector3(Mathf.Cos(directionNeg * Mathf.Deg2Rad) * dStep, 0f, -Mathf.Sin(directionNeg * Mathf.Deg2Rad) * dStep);
-            }
+                if (validPoint(positionNeg))
+                {
+                    r.addPoint(positionNeg);
+                    if (major)
+                    {
+                        majorSeeds.Add(positionNeg);
 
-            if (!stopStreamLine(positionPos))
-            {
-                r.addPoint(positionPos);
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                cube.transform.position = positionPos;
-            }
-            else
-            {
-                buildPos = false;
-            }
+                    }
+                    else
+                    {
+                        minorSeeds.Add(positionNeg);
 
-            if (!stopStreamLine(positionNeg))
-            {
-                r.addPoint(positionNeg);
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                cube.transform.position = positionNeg;
-            }
-            else
-            {
-                buildNeg = false;
+                    }
+                }
+                else
+                {
+                    buildNeg = false;
+                }
             }
 
-            if (panic > 10000)
-            {
-                buildNeg = false;
-                buildPos = false;
-            }
         }
 
         return r;
     }
 
-    bool stopStreamLine(Vector3 position)
+    Vector3 selectSeed(bool major)
     {
-        if (Vector3.Distance(position, Vector3.zero) > field.totalSize / 2)
+        Vector3 seed = Vector3.zero;
+
+        if (potentialSeeds(major).Count > 0)
+        {
+            int count = potentialSeeds(major).Count;
+            seed = potentialSeeds(major)[count - 1];
+            potentialSeeds(major).RemoveAt(count - 1);
+            if (validSeed(major, seed))
+            {
+                return seed;
+            }
+        }
+
+        seed = Vector3.zero;
+        // try getting a new seed 100 times before giving up
+        for (int i = 0; i < 100; i++)
+        {
+            seed = new Vector3(Random.Range(-field.totalSize / 2, field.totalSize / 2), 0f, Random.Range(-field.totalSize / 2, field.totalSize / 2));
+            if (validSeed(major, seed))
+            {
+                return seed;
+            }
+        }
+
+        return seed;
+    }
+
+    List<Vector3> potentialSeeds(bool major)
+    {
+        return major ? majorSeeds : minorSeeds;
+    }
+
+    bool validSeed(bool major, Vector3 seed)
+    {
+        // there is DEFINITELY a more efficient way to do this.
+        bool valid = true;
+        foreach (Road road in roads)
+        {
+            foreach (Vector3 point in road.points)
+            {
+                if (Vector3.Distance(point, seed) < dSep)
+                {
+                    valid = false;
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    bool validPoint(Vector3 p)
+    {
+
+        if (Vector3.Distance(p, Vector3.zero) > field.totalSize / 2f)
+        {
+            return false;
+        }
+        else
         {
             return true;
         }
+    }
 
+    bool stopStreamLine(Vector3 position)
+    {
         return false;
     }
 
     float integrate(Vector3 point)
     {
-        float theta1 = field.sampleTensor(point).theta;
-        float theta2 = field.sampleTensor(point + dStep * new Vector3(Mathf.Sin((theta1 / 2f) * (Mathf.PI / 180f)), 0f, Mathf.Cos((theta1 / 2f) * (Mathf.PI / 180f)))).theta;
-        float theta3 = field.sampleTensor(point + dStep * new Vector3(Mathf.Sin((theta2 / 2f) * (Mathf.PI / 180f)), 0f, Mathf.Cos((theta2 / 2f) * (Mathf.PI / 180f)))).theta;
-        float theta4 = field.sampleTensor(point + dStep * new Vector3(Mathf.Sin((theta3) * (Mathf.PI / 180f)), 0f, Mathf.Cos((theta3) * (Mathf.PI / 180f)))).theta;
-
-        float theta = (theta1 / 6f + theta2 / 3f + theta3 / 3f + theta4 / 6f);
-        return theta;
+        return field.sampleTensor(point).theta;
     }
 
-    Vector3 selectSeed(Road r)
+    Vector3 integrateStep(Vector3 point, bool pos, bool major)
     {
-        Vector3 seed = Vector3.zero;
+        float dir = integrate(point);
 
-        if (r == null)
+        if (pos)
         {
-            return seed;
+            if (major)
+            {
+                return new Vector3(Mathf.Sin(dir * Mathf.Deg2Rad) * dStep, 0f, Mathf.Cos(dir * Mathf.Deg2Rad) * dStep);
+            }
+            else
+            {
+                return new Vector3(Mathf.Cos(dir * Mathf.Deg2Rad) * dStep, 0f, -Mathf.Sin(dir * Mathf.Deg2Rad) * dStep);
+            }
         }
         else
         {
-            Vector3 p = Vector3.zero;
-            for (int i = 0; i < 100; i++)
+            if (major)
             {
-                p = r.points[Random.Range(0, r.points.Count - 1)];
-
-                bool close = false;
-                foreach (Road r2 in roads)
-                {
-                    if (r.major != r2.major)
-                    {
-                        foreach (Vector3 p2 in r2.points)
-                        {
-                            if (Vector3.Distance(p, p2) < dSep)
-                            {
-                                close = true;
-                            }
-                        }
-                    }
-                }
-                if (!close)
-                {
-                    Debug.Log("Return p");
-
-                    return p;
-                }
+                return new Vector3(-Mathf.Sin(dir * Mathf.Deg2Rad) * dStep, 0f, -Mathf.Cos(dir * Mathf.Deg2Rad) * dStep);
             }
-
-            return seed;
+            else
+            {
+                return new Vector3(-Mathf.Cos(dir * Mathf.Deg2Rad) * dStep, 0f, Mathf.Sin(dir * Mathf.Deg2Rad) * dStep);
+            }
         }
     }
 }

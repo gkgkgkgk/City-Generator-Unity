@@ -281,7 +281,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dSep: 10
   dTest: 5
-  dStep: 2.5
+  dStep: 2
+  majorSeeds: []
+  minorSeeds: []
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
