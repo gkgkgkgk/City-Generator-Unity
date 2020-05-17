@@ -279,11 +279,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 196659b4b53ef4a498fa7d344341f33d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dSep: 10
+  dSep: 7
   dTest: 5
   dStep: 2
   majorSeeds: []
   minorSeeds: []
+  minorMat: {fileID: 2100000, guid: e815fdd6699fe2740adb41d419d22acd, type: 2}
+  majorMat: {fileID: 2100000, guid: 5c697f2b84ae64f4986fcd821f2704c7, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
