@@ -35,15 +35,28 @@ public class StreamLineGen : MonoBehaviour
 
     public void generateStreamLines()
     {
-        Debug.Log(Mathf.DeltaAngle(-64, 115));
-        Debug.Log(Mathf.DeltaAngle(-85, -207));
-        buildRoad(Vector3.zero, true);
-        buildRoad(Vector3.zero, false);
+        bool major = true;
+        Vector3 seed = Vector3.zero;
+        for (int i = 0; i < field.totalSize * 10f; i++)
+        {
+            Road r = buildRoad(seed, major);
+            r.id = i;
+            roads.Add(r);
+            major = !major;
+            seed = newSeed(major);
 
+            if (Vector3.zero == seed)
+            {
+                Debug.Log("zero seed!");
+                break;
+            }
+        }
     }
 
-    void buildRoad(Vector3 seed, bool major)
+    Road buildRoad(Vector3 seed, bool major)
     {
+        Road r = new Road();
+        r.major = major;
         bool buildPos = true;
         bool buildNeg = true;
         Vector3 positionPos = seed;
@@ -68,20 +81,23 @@ public class StreamLineGen : MonoBehaviour
             positionNeg += new Vector3(Mathf.Sin(dirNeg * Mathf.Deg2Rad) * dStep, 0f, Mathf.Cos(dirNeg * Mathf.Deg2Rad) * dStep);
 
 
-            if (validPoint(positionPos))
+            if (validPoint(positionPos, r))
             {
+                r.addPoint(positionPos);
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.transform.position = positionPos;
                 sphere.AddComponent<RoadSegment>();
                 sphere.GetComponent<RoadSegment>().theta = dirPos;
+                sphere.GetComponent<RoadSegment>().id = dirPos;
             }
             else
             {
                 buildPos = false;
             }
 
-            if (validPoint(positionNeg))
+            if (validPoint(positionNeg, r))
             {
+                r.addPoint(positionNeg);
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.transform.position = positionNeg;
                 sphere.AddComponent<RoadSegment>();
@@ -92,16 +108,54 @@ public class StreamLineGen : MonoBehaviour
                 buildNeg = false;
             }
         }
+
+        return r;
     }
 
-    bool validPoint(Vector3 point)
+    bool validPoint(Vector3 point, Road r)
     {
+        // check for out of bounds
         if (Vector3.Distance(point, Vector3.zero) > field.totalSize / 2f)
         {
+            Debug.Log("Stopped out of bounds");
             return false;
         }
 
+        // check intersection with similar road
+        foreach (Road r2 in roads)
+        {
+            if (r2.major == r.major)
+            {
+                foreach (Vector3 point2 in r2.points)
+                {
+                    if (Vector3.Distance(point, point2) < dSep)
+                    {
+                        Debug.Log("Stopped intersection " + point + " " + point2);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // check for circle
+        foreach (Vector3 point2 in r.points)
+        {
+            if (Vector3.Distance(point, point2) < dStep / 2f)
+            {
+                Debug.Log("Stopped circle");
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    Vector3 newSeed(bool major)
+    {
+        return new Vector3(Random.Range(-field.totalSize / 2f, field.totalSize / 2f), 0f, Random.Range(-field.totalSize / 2f, field.totalSize / 2f));
+
+
+        return Vector3.zero;
     }
 
     float calculateTheta(Vector3 p, float previousTheta, bool major, bool pos)
@@ -141,3 +195,9 @@ public class StreamLineGen : MonoBehaviour
     }
 
 }
+
+/* TODO: 
+- remove/join Dangling roads
+- remove small roads
+- detect intersections
+*/
