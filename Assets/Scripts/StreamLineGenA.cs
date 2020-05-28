@@ -36,7 +36,7 @@ public class StreamLineGenA : MonoBehaviour
     {
         Vector3 seed = Vector3.zero;
         bool major = true;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < field.totalSize; i++)
         {
             Road r = buildRoad(seed, major, i);
             if (r != null) { roads.Add(r); }
@@ -119,6 +119,30 @@ public class StreamLineGenA : MonoBehaviour
         r.sortPoints();
 
         return r;
+    }
+
+    public void getIntersections()
+    {
+        // O (log n) NO.
+        foreach (Road r in roads)
+        {
+            for (int i = 0; i < r.sortedPoints.Count - 1; i++)
+            {
+                foreach (Road r2 in roads)
+                {
+                    if (r.id != r2.id)
+                    {
+                        for (int j = 0; j < r2.sortedPoints.Count - 1; j++)
+                        {
+                            Vector ab = r.sortedPoints[i + 1] - r.sortedPoints[i];
+                            Vector cd = r2.sortedPoints[i + 1] - r2.sortedPoints[i];
+
+                            // where does ab and cd intersect? add to list.
+                        }
+                    }
+                }
+            }
+        }
     }
 
 

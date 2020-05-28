@@ -24,5 +24,10 @@ public class StreamLineGenAEditor : Editor
             gen.hideRoads();
             draw = true;
         }
+
+        if (GUILayout.Button("Generate"))
+        {
+            gen.generate();
+        }
     }
 }

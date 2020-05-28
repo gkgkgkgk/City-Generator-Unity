@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalSize: 150
-  numberOfFields: 3
+  numberOfFields: 4
   fields: []
   majorLine: {fileID: 1920341042768624537, guid: 80a582e20d65b6c4ba49c36c5355d188,
     type: 3}

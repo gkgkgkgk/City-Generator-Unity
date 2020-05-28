@@ -18,13 +18,11 @@ public class FieldGen : MonoBehaviour
     List<Tensor> displayTensors = new List<Tensor>();
     List<GameObject> lines = new List<GameObject>();
 
-
     // Start is called before the first frame update
     void Start()
     {
         generateRandomFields(numberOfFields);
         sampleDisplayTensors();
-        GetComponent<StreamLineGenA>().generate();
     }
 
     // Update is called once per frame
