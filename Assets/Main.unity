@@ -223,7 +223,7 @@ GameObject:
   m_Component:
   - component: {fileID: 929245391}
   - component: {fileID: 929245392}
-  - component: {fileID: 929245393}
+  - component: {fileID: 929245394}
   m_Layer: 0
   m_Name: gen
   m_TagString: Untagged
@@ -257,8 +257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1388ca9b44795774f9dc1da27f146251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalSize: 200
-  numberOfFields: 5
+  totalSize: 150
+  numberOfFields: 3
   fields: []
   majorLine: {fileID: 1920341042768624537, guid: 80a582e20d65b6c4ba49c36c5355d188,
     type: 3}
@@ -267,7 +267,7 @@ MonoBehaviour:
   fieldCenter: {fileID: 3480162738634568996, guid: ad8ee2d7c076214499400f283db612b6,
     type: 3}
   tensorDisplayDensity: 1
---- !u!114 &929245393
+--- !u!114 &929245394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -276,17 +276,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 929245390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 196659b4b53ef4a498fa7d344341f33d, type: 3}
+  m_Script: {fileID: 11500000, guid: 180d102c8a4b60e40899b8e073953527, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dSep: 7
-  dTest: 5
-  dStep: 1
+  dSep: 10
+  dStep: 0.5
   roads: []
-  majorSeeds: []
-  minorSeeds: []
-  minorMat: {fileID: 2100000, guid: e815fdd6699fe2740adb41d419d22acd, type: 2}
-  majorMat: {fileID: 2100000, guid: 5c697f2b84ae64f4986fcd821f2704c7, type: 2}
+  point: {fileID: 2100000, guid: 5c697f2b84ae64f4986fcd821f2704c7, type: 2}
+  nonPoint: {fileID: 2100000, guid: e815fdd6699fe2740adb41d419d22acd, type: 2}
+  angleThreshold: 2
+  roadMat: {fileID: 2100000, guid: c54cfaed9becdec48bcde663d376e898, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

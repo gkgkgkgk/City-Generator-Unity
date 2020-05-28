@@ -24,7 +24,7 @@ public class FieldGen : MonoBehaviour
     {
         generateRandomFields(numberOfFields);
         sampleDisplayTensors();
-        GetComponent<StreamLineGen>().generateStreamLines();
+        GetComponent<StreamLineGenA>().generate();
     }
 
     // Update is called once per frame
