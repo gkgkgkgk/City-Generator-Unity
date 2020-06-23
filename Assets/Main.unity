@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 929245391}
   - component: {fileID: 929245392}
   - component: {fileID: 929245394}
+  - component: {fileID: 929245393}
   m_Layer: 0
   m_Name: gen
   m_TagString: Untagged
@@ -257,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1388ca9b44795774f9dc1da27f146251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalSize: 150
+  totalSize: 250
   numberOfFields: 4
   fields: []
   majorLine: {fileID: 1920341042768624537, guid: 80a582e20d65b6c4ba49c36c5355d188,
@@ -266,6 +267,25 @@ MonoBehaviour:
     type: 3}
   fieldCenter: {fileID: 3480162738634568996, guid: ad8ee2d7c076214499400f283db612b6,
     type: 3}
+  tensorDisplayDensity: 1
+--- !u!114 &929245393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929245390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b26f4cf1ce2894e88dd8da2711e626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalSize: 100
+  numberOfFields: 5
+  fields: []
+  majorLine: {fileID: 0}
+  minorLine: {fileID: 0}
+  fieldCenter: {fileID: 0}
   tensorDisplayDensity: 1
 --- !u!114 &929245394
 MonoBehaviour:

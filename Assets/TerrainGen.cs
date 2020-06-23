@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FieldGen : MonoBehaviour
+public class TerrainGen : MonoBehaviour
 {
-    public float totalSize = 100;
+    public int totalSize = 100;
     public int numberOfFields = 5;
-
 
     public List<Field> fields = new List<Field>();
 
@@ -23,12 +22,6 @@ public class FieldGen : MonoBehaviour
     {
         generateRandomFields(numberOfFields);
         sampleDisplayTensors();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     void generateRandomFields(float amount)
@@ -86,21 +79,5 @@ public class FieldGen : MonoBehaviour
         theta = weight == 0 ? 0f : theta / weight;
 
         return new Tensor(position, theta, weight);
-    }
-
-    public void drawTensors()
-    {
-        foreach (GameObject line in lines)
-        {
-            line.SetActive(true);
-        }
-    }
-
-    public void hideTensors()
-    {
-        foreach (GameObject line in lines)
-        {
-            line.SetActive(false);
-        }
     }
 }

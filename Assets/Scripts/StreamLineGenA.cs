@@ -20,7 +20,6 @@ public class StreamLineGenA : MonoBehaviour
 
     public Material roadMat;
 
-    // Start is called before the first frame update
     void Awake()
     {
         field = this.gameObject.GetComponent<FieldGen>();
@@ -69,7 +68,7 @@ public class StreamLineGenA : MonoBehaviour
 
         r.addPositivePoint(seed);
 
-        while (fs < 5000 && buildPos || buildNeg)
+        while (fs < 1000 && buildPos || buildNeg)
         {
             fs++;
             if (buildPos)
@@ -134,8 +133,8 @@ public class StreamLineGenA : MonoBehaviour
                     {
                         for (int j = 0; j < r2.sortedPoints.Count - 1; j++)
                         {
-                            Vector ab = r.sortedPoints[i + 1] - r.sortedPoints[i];
-                            Vector cd = r2.sortedPoints[i + 1] - r2.sortedPoints[i];
+                            Vector3 ab = r.sortedPoints[i + 1] - r.sortedPoints[i];
+                            Vector3 cd = r2.sortedPoints[i + 1] - r2.sortedPoints[i];
 
                             // where does ab and cd intersect? add to list.
                         }
@@ -169,6 +168,17 @@ public class StreamLineGenA : MonoBehaviour
                 }
         }
 
+        // for (int i = 0; i < road.sortedPoints.Count - 1; i++)
+        // {
+
+        //     Vector3 closest = closestPoint(point, road.sortedPoints[i], road.sortedPoints[i + 1]);
+
+        //     if (Vector3.Distance(point, closest) < dStep)
+        //     {
+        //         return false;
+        //     }
+        // }
+
         return true;
     }
 
@@ -185,8 +195,6 @@ public class StreamLineGenA : MonoBehaviour
         {
             return point;
         }
-
-        //Debug.Log("point intersection:" + point + " P:" + p + " a:" + a + " b:" + b);
 
         return Vector3.Distance(point, a) < Vector3.Distance(point, b) ? a : b;
     }
